@@ -1,0 +1,31 @@
+package com.aiplatform.auth_service.controller;
+
+import com.aiplatform.auth_service.dto.AuthRequest;
+import com.aiplatform.auth_service.dto.AuthResponse;
+import com.aiplatform.auth_service.service.AuthService;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/auth")
+public class AuthController {
+
+    private final AuthService authService;
+
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
+
+    @PostMapping("/register")
+    public AuthResponse register(@RequestBody AuthRequest request) {
+        return new AuthResponse(
+                authService.register(request.getEmail(), request.getPassword())
+        );
+    }
+
+    @PostMapping("/login")
+    public AuthResponse login(@RequestBody AuthRequest request) {
+        return new AuthResponse(
+                authService.login(request.getEmail(), request.getPassword())
+        );
+    }
+}
