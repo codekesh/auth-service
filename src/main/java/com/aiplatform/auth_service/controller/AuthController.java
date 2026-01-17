@@ -21,15 +21,13 @@ public class AuthController {
     @PostMapping("/register")
     public AuthResponse register(@RequestBody AuthRequest request) {
         return new AuthResponse(
-                authService.register(request.getEmail(), request.getPassword())
-        );
+                authService.register(request.getEmail(), request.getPassword()));
     }
 
     @PostMapping("/login")
     public AuthResponse login(@RequestBody AuthRequest request) {
         return new AuthResponse(
-                authService.login(request.getEmail(), request.getPassword())
-        );
+                authService.login(request.getEmail(), request.getPassword()));
     }
 
     @GetMapping("/validate")

@@ -11,11 +11,9 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private static final String SECRET =
-            "my-super-secret-key-for-jwt-signing-which-is-long-enough";
+    private static final String SECRET = "my-super-secret-key-for-jwt-signing-which-is-long-enough";
 
-    private final Key key =
-            Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
+    private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
 
     private final long EXPIRATION = 60 * 60 * 1000; // 1 hour
 
