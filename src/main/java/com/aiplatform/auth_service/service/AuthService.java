@@ -18,9 +18,11 @@ public class AuthService {
         this.jwtUtil = jwtUtil;
     }
 
-    public String register(String email, String password) {
+    public String register(String name, String email, String phone, String password) {
         User user = new User();
+        user.setName(name);
         user.setEmail(email);
+        user.setPhone(phone);
         user.setPassword(encoder.encode(password));
         userRepository.save(user);
         return jwtUtil.generateToken(email);
