@@ -1,8 +1,13 @@
 package com.aiplatform.auth_service.service;
 
 import com.aiplatform.auth_service.entity.User;
+import com.aiplatform.auth_service.entity.UserResponse;
+import com.aiplatform.auth_service.entity.UserUpdateRequest;
 import com.aiplatform.auth_service.repository.UserRepository;
 import com.aiplatform.auth_service.security.JwtUtil;
+
+import java.util.List;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +29,7 @@ public class AuthService {
         user.setEmail(email);
         user.setPhone(phone);
         user.setPassword(encoder.encode(password));
+        user.setRole("USER");
         userRepository.save(user);
         return jwtUtil.generateToken(email);
     }
@@ -37,5 +43,54 @@ public class AuthService {
         }
 
         return jwtUtil.generateToken(email);
+    }
+
+    public UserResponse getCurrentUser(String authHeader) {
+
+        String token = authHeader.substring(7);
+        String email = jwtUtil.validateTokenAndGetEmail(token);
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return new UserResponse(
+                user.getName(),
+                user.getEmail(),
+                user.getPhone());
+    }
+
+    public UserResponse updateUser(String authHeader, UserUpdateRequest request) {
+
+        String token = authHeader.substring(7);
+        String email = jwtUtil.validateTokenAndGetEmail(token);
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (request.getName() != null) {
+            user.setName(request.getName());
+        }
+
+        if (request.getPhone() != null) {
+            user.setPhone(request.getPhone());
+        }
+
+        userRepository.save(user);
+
+        return new UserResponse(
+                user.getName(),
+                user.getEmail(),
+                user.getPhone());
+    }
+
+    public List<UserResponse> getAllUsers() {
+
+        return userRepository.findAll()
+                .stream()
+                .map(user -> new UserResponse(
+                        user.getName(),
+                        user.getEmail(),
+                        user.getPhone()))
+                .toList();
     }
 }

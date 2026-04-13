@@ -2,8 +2,13 @@ package com.aiplatform.auth_service.controller;
 
 import com.aiplatform.auth_service.dto.AuthRequest;
 import com.aiplatform.auth_service.dto.AuthResponse;
+import com.aiplatform.auth_service.entity.UserResponse;
+import com.aiplatform.auth_service.entity.UserUpdateRequest;
 import com.aiplatform.auth_service.service.AuthService;
 import com.aiplatform.auth_service.security.JwtUtil;
+
+import java.util.List;
+
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -46,5 +51,35 @@ public class AuthController {
         }
 
         return email;
+    }
+
+    @GetMapping("/me")
+    public UserResponse getCurrentUser(
+            @RequestHeader("Authorization") String authHeader) {
+
+        return authService.getCurrentUser(authHeader);
+    }
+
+    @PutMapping("/me")
+    public UserResponse updateUser(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody UserUpdateRequest request) {
+
+        return authService.updateUser(authHeader, request);
+    }
+
+    @GetMapping("/admin/users")
+    public List<UserResponse> getAllUsers(
+            @RequestHeader("Authorization") String authHeader) {
+
+        // 🔥 Validate token
+        String email = jwtUtil.validateTokenAndGetEmail(authHeader.substring(7));
+
+        if (email == null) {
+            throw new RuntimeException("Invalid token");
+        }
+
+        // ❗ TEMP: allow all (later restrict to admin)
+        return authService.getAllUsers();
     }
 }
