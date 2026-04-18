@@ -79,7 +79,6 @@ public class AuthController {
             throw new RuntimeException("Invalid token");
         }
 
-        // ❗ TEMP: allow all (later restrict to admin)
         return authService.getAllUsers();
     }
 }
